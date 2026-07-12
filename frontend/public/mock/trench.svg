@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 760">
+  <defs><linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8dde8"/><stop offset="1" stop-color="#aab7cf"/></linearGradient><linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#eef0f3"/><stop offset="1" stop-color="#c0c8d3"/></linearGradient></defs>
+  <rect width="600" height="760" fill="url(#a)"/>
+  <circle cx="475" cy="120" r="120" fill="#f2f4f8" opacity=".45"/>
+  <path d="M210 112h180l72 88-56 76-30-42 30 402H193l31-402-29 42-57-76 72-88Z" fill="url(#b)"/>
+  <path d="m210 112 87 140 93-140-28-24H238l-28 24Z" fill="#d4dae2"/>
+  <path d="M298 252v384M223 389h167M265 141l33 111 36-111" stroke="#8d99aa" stroke-width="7"/>
+  <path d="M233 377c38 22 95 26 137 0" fill="none" stroke="#7a879b" stroke-width="9"/>
+  <circle cx="300" cy="309" r="7" fill="#68788f"/><circle cx="300" cy="351" r="7" fill="#68788f"/><circle cx="300" cy="430" r="7" fill="#68788f"/><circle cx="300" cy="474" r="7" fill="#68788f"/>
+  <path d="M112 645h376" stroke="#ffffff" stroke-opacity=".45" stroke-width="3"/>
+</svg>

@@ -1,8 +1,8 @@
 from functools import lru_cache
-from typing import Any
+from typing import Annotated, Any
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     backend_host: str = Field(default="0.0.0.0", alias="BACKEND_HOST")
     backend_port: int = Field(default=8000, alias="BACKEND_PORT")
-    backend_cors_origins: list[str] = Field(
+    backend_cors_origins: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: ["http://localhost:5173", "http://127.0.0.1:5173"],
         alias="BACKEND_CORS_ORIGINS",
     )
@@ -32,7 +32,12 @@ class Settings(BaseSettings):
     @classmethod
     def parse_origins(cls, value: Any) -> list[str]:
         if isinstance(value, str):
-            return [item.strip() for item in value.split(",") if item.strip()]
+            raw = value.strip()
+            if raw.startswith("[") and raw.endswith("]"):
+                import json
+                parsed = json.loads(raw)
+                return [str(item).strip() for item in parsed if str(item).strip()]
+            return [item.strip() for item in raw.split(",") if item.strip()]
         return value
 
 

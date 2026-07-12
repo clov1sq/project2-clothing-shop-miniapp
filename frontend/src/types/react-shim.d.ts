@@ -1,4 +1,7 @@
 declare namespace JSX {
+  interface IntrinsicAttributes {
+    key?: any;
+  }
   interface IntrinsicElements {
     [elemName: string]: any;
   }
@@ -6,6 +9,8 @@ declare namespace JSX {
 
 declare module 'react' {
   export type ReactNode = any;
+  export type SVGProps<T> = Record<string, any>;
+  export type ButtonHTMLAttributes<T> = Record<string, any>;
   export class Component<P = any, S = any> {
     constructor(props: P);
     props: P;

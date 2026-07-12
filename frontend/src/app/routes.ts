@@ -1,6 +1,6 @@
-export type AppRoute = 'home' | 'catalog' | 'cart' | 'orders';
+export type AppRoute = 'home' | 'catalog' | 'cart' | 'profile' | 'admin';
 
-const allowedRoutes: AppRoute[] = ['home', 'catalog', 'cart', 'orders'];
+const allowedRoutes: AppRoute[] = ['home', 'catalog', 'cart', 'profile', 'admin'];
 
 export function readRouteFromHash(): AppRoute {
   const value = window.location.hash.replace('#/', '') as AppRoute;

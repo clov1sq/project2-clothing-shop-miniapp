@@ -1,6 +1,6 @@
 {
   "name": "project2-frontend",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit",
     "format": "tsc --noEmit",
-    "test": "tsc --noEmit"
+    "test": "tsc --noEmit",
+    "start": "vite preview --host 0.0.0.0 --port ${PORT:-4173}"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.51.0",
@@ -18,5 +19,8 @@
     "react-dom": "^18.3.1",
     "typescript": "^5.5.4",
     "vite": "^8.1.4"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }
