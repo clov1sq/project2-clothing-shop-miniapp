@@ -1,88 +1,130 @@
-# Project2 Telegram Fashion Store — v2 Visual Foundation
+# Project2 Telegram Fashion Store — v3 Catalog
 
-Нова самостійна візуальна версія Telegram Mini App для fashion e-commerce. Інтерфейс не використовує дизайн, компоненти чи UX старого Project 2.
+Повна накопичувальна версія Telegram fashion-магазину: foundation + Telegram auth + каталог + базове адміністрування каталогу.
 
-## Що є у v2
+## Реалізовано
 
-- нова світла fashion design system на CSS variables;
-- branded header і wordmark;
-- editorial hero;
-- preview-категорії та 6 локальних mock-товарів;
-- нові product cards;
-- каталог, кошик, профіль і admin preview;
-- auth loading/error screens;
-- skeleton, toast, status badge, empty state;
-- Telegram safe area, Back Button і light haptics;
-- адаптація 320–760 px і темна Telegram theme;
-- FastAPI backend, PostgreSQL foundation та health checks.
+- FastAPI, PostgreSQL, SQLAlchemy Async та Alembic.
+- Aiogram-бот із `/start`, `/shop`, `/admin` і Telegram menu button.
+- Перевірка Telegram `initData`, строку `auth_date`, серверні сесії та admin role.
+- Категорії, бренди, товари, кольори, розміри, варіанти, фото й залишки.
+- Головна, каталог, пошук, фільтри, сортування, pagination і сторінка товару.
+- Mobile-first admin routes для товарів, категорій, брендів, фото та залишків.
+- Audit log, inventory movements, soft archive та optimistic concurrency.
+- Детермінований idempotent seed: 6 категорій, 6 брендів, 30 товарів, 114 варіантів.
 
-Preview-товари не підключені до бази даних у v2.
+Не входять у v3: кошик, обране, checkout, замовлення, оплата й доставка.
 
 ## Railway
 
-### Backend
+Структуру сервісів змінювати не потрібно:
 
-- Root Directory: `/backend`
-- Build Command: порожньо
-- Start Command: порожньо
+- backend: Root Directory `/backend`;
+- bot: Root Directory `/backend`;
+- frontend: Root Directory `/frontend`;
+- PostgreSQL: наявний Railway service.
 
-Railway використає `backend/Dockerfile`.
+Backend `Dockerfile` запускає `backend/start.sh`, який автоматично виконує:
 
-Backend variables:
+1. `alembic upgrade head`;
+2. idempotent seed;
+3. Uvicorn на `$PORT`.
+
+Bot service може залишатися з чинною Start Command:
+
+```text
+python -m app.bot.main
+```
+
+Frontend може залишатися з чинною Start Command:
+
+```text
+npm run start
+```
+
+## Обов’язкові production variables
+
+### Backend і bot
 
 ```env
 APP_ENV=production
 SHOP_NAME=BlueWear
 LOG_LEVEL=INFO
 DATABASE_URL=postgresql+asyncpg://${{Postgres.PGUSER}}:${{Postgres.PGPASSWORD}}@${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}
-BACKEND_CORS_ORIGINS=https://YOUR-FRONTEND-DOMAIN.up.railway.app
-MINI_APP_URL=https://YOUR-FRONTEND-DOMAIN.up.railway.app
-TELEGRAM_BOT_TOKEN=
+BACKEND_CORS_ORIGINS=https://YOUR-FRONTEND.up.railway.app
+MINI_APP_URL=https://YOUR-FRONTEND.up.railway.app
+BOT_TOKEN=YOUR_TELEGRAM_TOKEN
+ADMIN_TELEGRAM_IDS=YOUR_TELEGRAM_ID
+TELEGRAM_AUTH_MAX_AGE_SECONDS=86400
+SESSION_COOKIE_NAME=p2_session
+SESSION_TTL_DAYS=14
+DEV_AUTH_ENABLED=false
 ```
-
-`BACKEND_CORS_ORIGINS` приймає як одну URL-адресу, так і JSON-масив.
 
 ### Frontend
 
-- Root Directory: `/frontend`
-- Build Command: `npm run build`
-- Start Command: `npm run start`
-
-Frontend variables:
-
 ```env
-VITE_API_BASE_URL=https://YOUR-BACKEND-DOMAIN.up.railway.app
+VITE_API_URL=https://YOUR-BACKEND.up.railway.app
+VITE_API_BASE_URL=https://YOUR-BACKEND.up.railway.app
 VITE_SHOP_NAME=BlueWear
 ```
 
-## Перевірка
+Після зміни frontend variables потрібен новий build frontend service.
 
-Backend:
-
-- `/health/live`
-- `/health/ready`
-- `/api/meta`
-
-Frontend:
-
-- `#/home`
-- `#/catalog`
-- `#/cart`
-- `#/profile`
-- `#/admin`
-- `?auth=error` — preview auth error screen
-
-## Local
+## Локальний запуск
 
 ```bash
-cd frontend
-npm ci
-npm run build
-npm run dev
+cp .env.example .env
+docker compose up --build
 ```
+
+Адреси:
+
+- frontend: `http://localhost:5173`;
+- API live: `http://localhost:8000/health/live`;
+- database readiness: `http://localhost:8000/health/ready`;
+- OpenAPI: `http://localhost:8000/docs`.
+
+`DEV_AUTH_ENABLED=true` дозволяє локально відкрити frontend без Telegram. У production він має бути `false`.
+
+## Перевірки
+
+```bash
+make check
+```
+
+Або окремо:
 
 ```bash
 cd backend
-python -m pip install -r requirements.txt
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+ruff check app tests migrations
+mypy app
+pytest -q
+
+cd ../frontend
+npm ci
+npm run typecheck
+npm test
+npm run build
 ```
+
+## Міграції та seed
+
+- `0001_foundation` — system metadata;
+- `0002_auth` — users, roles, sessions, audit log;
+- `0003_catalog` — catalog, variants, media, inventory та movements.
+
+Seed запускається окремо від migration і є безпечним для повторного запуску:
+
+```bash
+cd backend
+python -m app.seed
+```
+
+## Медіа у v3
+
+Seed використовує зовнішні demo photo URLs. Адмін додає фото через HTTPS URL. Постійне S3-compatible file storage не вмикається автоматично, тому Railway ephemeral disk не використовується для збереження фото.
+
+## Версія
+
+`0.3.0`

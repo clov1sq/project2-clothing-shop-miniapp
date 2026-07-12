@@ -12,13 +12,13 @@ async def meta() -> dict[str, object]:
         "ok": True,
         "data": {
             "shop_name": settings.shop_name,
-            "version": "0.1.0",
+            "version": "0.3.0",
             "features": {
-                "telegram_auth": False,
-                "catalog": False,
+                "telegram_auth": True,
+                "catalog": True,
                 "cart": False,
                 "checkout": False,
-                "admin": False,
+                "admin": True,
             },
         },
     }

@@ -1,28 +1,6 @@
-import { BagIcon, ChevronLeftIcon, SearchIcon } from './Icons';
+import type { ReactNode } from 'react';
 import { BrandMark } from './BrandMark';
-import { IconButton } from './IconButton';
 
-type Props = {
-  shopName: string;
-  back?: boolean;
-  onBack?: () => void;
-  onPreviewAction?: () => void;
-};
-
-export function AppHeader({ shopName, back = false, onBack, onPreviewAction }: Props) {
-  return (
-    <header className="app-header">
-      <div className="app-header__leading">
-        {back ? (
-          <IconButton label="Назад" onClick={onBack}><ChevronLeftIcon /></IconButton>
-        ) : (
-          <BrandMark compact shopName={shopName} />
-        )}
-      </div>
-      <div className="app-header__actions">
-        <IconButton label="Пошук — preview" onClick={onPreviewAction}><SearchIcon /></IconButton>
-        <IconButton badge="0" label="Кошик" onClick={onPreviewAction}><BagIcon /></IconButton>
-      </div>
-    </header>
-  );
+export function AppHeader({ title, eyebrow, action }: { title?: string; eyebrow?: string; action?: ReactNode }) {
+  return <header className="app-header"><div>{title ? <><p className="app-header__eyebrow">{eyebrow}</p><h1 className="app-header__title">{title}</h1></> : <BrandMark />}</div>{action}</header>;
 }

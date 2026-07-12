@@ -1,6 +1,6 @@
 {
   "name": "project2-frontend",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,8 +8,7 @@
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit",
-    "format": "tsc --noEmit",
-    "test": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
     "start": "vite preview --host 0.0.0.0 --port ${PORT:-4173}"
   },
   "dependencies": {

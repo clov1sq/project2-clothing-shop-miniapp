@@ -9,13 +9,13 @@ router = APIRouter(prefix="/health", tags=["health"])
 @router.get("/live")
 async def live() -> dict[str, object]:
     settings = get_settings()
-    return {"ok": True, "service": "project2-backend", "env": settings.app_env}
+    return {"ok": True, "service": "project2-backend", "env": settings.app_env, "version": "0.3.0"}
 
 
 @router.get("/ready")
 async def ready() -> dict[str, object]:
-    settings = get_settings()
-    return {"ok": True, "shop_name": settings.shop_name, "database": "not_checked"}
+    await check_database()
+    return {"ok": True, "database": "ok", "version": "0.3.0"}
 
 
 @router.get("/db")

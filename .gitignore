@@ -1,38 +1,23 @@
-# secrets
 .env
 .env.*
 !.env.example
-
-# Python
 __pycache__/
 *.py[cod]
-.venv/
-venv/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-.coverage
-htmlcov/
-*.egg-info/
-
-# Node
+.venv/
+venv/
 node_modules/
-frontend/dist/
-frontend/.vite/
-frontend/coverage/
-
-# IDE / OS
-.vscode/
-.idea/
+dist/
+.vite/
+coverage/
+*.log
 .DS_Store
 Thumbs.db
-
-# logs / temp
-*.log
-logs/
-tmp/
-*.tmp
-
-# database dumps
-*.dump
-*.sql.gz
+.idea/
+.vscode/
+*.sqlite
+*.sqlite3
+frontend/.typecheck-shims.d.ts
+frontend/tsconfig.localcheck.json

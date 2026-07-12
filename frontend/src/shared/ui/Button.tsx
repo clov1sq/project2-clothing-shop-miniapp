@@ -1,19 +1,12 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  children: ReactNode;
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
   loading?: boolean;
-  fullWidth?: boolean;
+  full?: boolean;
   icon?: ReactNode;
 };
 
-export function Button({ children, variant = 'primary', loading = false, fullWidth = false, icon, className = '', disabled, ...props }: Props) {
-  const classes = ['button', `button--${variant}`, fullWidth ? 'button--full' : '', className].filter(Boolean).join(' ');
-  return (
-    <button className={classes} disabled={disabled || loading} {...props}>
-      {loading ? <span className="button__spinner" aria-hidden="true" /> : icon}
-      <span>{children}</span>
-    </button>
-  );
+export function Button({ variant = 'primary', loading = false, full = false, icon, children, className = '', disabled, ...props }: Props) {
+  return <button className={`button button--${variant} ${full ? 'button--full' : ''} ${className}`} disabled={disabled || loading} {...props}>{loading ? <span className="button__spinner" /> : icon}{children}</button>;
 }

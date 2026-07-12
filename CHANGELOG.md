@@ -1,13 +1,27 @@
 # Changelog
 
-## 0.2.0
+## 0.3.0 — Catalog
 
-- Повністю нова fashion e-commerce visual system.
-- Додано AppHeader, BrandMark, Button variants, IconButton, BottomNavigation.
-- Додано ProductPreviewCard, CategoryChip, SectionHeader, ProfileCard, StatusBadge.
-- Додано AuthLoadingScreen, AuthErrorScreen, EmptyState, Toast і Skeleton.
-- Оформлено home, catalog, cart, profile та admin preview routes.
-- Додано локальні mock fashion visuals без зовнішніх image dependencies.
-- Додано Telegram safe area, Back Button, haptic feedback і dark-theme fallback.
-- Виправлено parsing `BACKEND_CORS_ORIGINS`: підтримується звичайний URL, comma-separated list і JSON array.
-- Додано Node 22 engine та Railway start script.
+### Added
+- Telegram `initData` HMAC validation, auth-age validation, users, roles and DB sessions.
+- `/start`, `/shop`, `/admin`, menu button and Mini App authorization bootstrap.
+- Categories, brands, products, colors, sizes, variants, media and inventory models.
+- Public home/catalog/product APIs with search, filters, sorting and pagination.
+- Product detail variant-combination logic and availability read model.
+- Mobile-first buyer UI: home, two-column catalog, filter/sort sheets and product gallery.
+- Admin catalog CRUD, draft/publish/archive, media URLs, variants and inventory adjustments.
+- Inventory movement journal, audit log and optimistic product version conflicts.
+- Idempotent seed with 30 demo products and catalog tests.
+
+### Database migrations
+- `0002_auth`
+- `0003_catalog`
+
+### Compatibility
+- Existing `BOT_TOKEN` remains supported.
+- Both `VITE_API_URL` and `VITE_API_BASE_URL` are supported.
+- Plain URL and JSON-like values are accepted for `BACKEND_CORS_ORIGINS`.
+
+### Known limitations
+- v3 intentionally excludes favorites, cart, checkout, orders, payments and delivery.
+- Media management uses external HTTPS image URLs; persistent file upload storage is deferred.

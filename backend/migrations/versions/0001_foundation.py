@@ -4,8 +4,9 @@ Revision ID: 0001_foundation
 Revises:
 Create Date: 2026-07-10 00:00:00
 """
-from alembic import op
+
 import sqlalchemy as sa
+from alembic import op
 
 revision = "0001_foundation"
 down_revision = None
@@ -18,8 +19,12 @@ def upgrade() -> None:
         "app_metadata",
         sa.Column("key", sa.String(length=100), primary_key=True),
         sa.Column("value", sa.String(length=500), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
     )
 
 
