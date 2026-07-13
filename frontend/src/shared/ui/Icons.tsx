@@ -27,3 +27,7 @@ export const CartIcon = (props: IconProps) => <IconBase {...props}><path d="M3 4
 export const TrashIcon = (props: IconProps) => <IconBase {...props}><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13"/><path d="M10 11v5M14 11v5"/></IconBase>;
 export const MinusIcon = (props: IconProps) => <IconBase {...props}><path d="M5 12h14"/></IconBase>;
 export const WifiOffIcon = (props: IconProps) => <IconBase {...props}><path d="m2 2 20 20M8.5 8.5A8 8 0 0 1 20 10M5 10a11 11 0 0 1 1.2-.9M8.5 14.5a5 5 0 0 1 7 0M12 19h.01"/></IconBase>;
+export const MapPinIcon = (props: IconProps) => <IconBase {...props}><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></IconBase>;
+export const PhoneIcon = (props: IconProps) => <IconBase {...props}><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7A2 2 0 0 1 22 16.9Z"/></IconBase>;
+export const ClockIcon = (props: IconProps) => <IconBase {...props}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></IconBase>;
+export const CheckCircleIcon = (props: IconProps) => <IconBase {...props}><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></IconBase>;

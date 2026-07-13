@@ -33,11 +33,11 @@ jobs:
           APP_ENV: test
           DATABASE_URL: sqlite+aiosqlite:////tmp/project2-ci.db
         run: |
-          alembic upgrade 0003_catalog
+          alembic upgrade 0004_favorites_cart
           alembic upgrade head
           python -m app.seed
           python -m app.seed
-          alembic downgrade 0003_catalog
+          alembic downgrade 0004_favorites_cart
           alembic upgrade head
       - name: Bot no-token startup
         working-directory: backend

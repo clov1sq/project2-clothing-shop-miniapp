@@ -1,5 +1,17 @@
 # Project 2 changelog
 
+## 0.5.0 — Checkout & inventory reservations
+
+- Added contact, delivery, review and result checkout screens.
+- Added orders and immutable order item snapshots.
+- Added 15-minute inventory reservations and automatic expiry worker.
+- Added PostgreSQL row locking plus an atomic conditional inventory update for last-unit protection.
+- Added idempotent checkout confirmation and private order lookup.
+- Added cart validation before checkout and atomic cart cleanup.
+- Improved NEW/SALE contrast, selected sizes, accordion tap states and scroll restoration.
+- Preserved the v0.4.1 session-cookie flow and records session `last_used_at`.
+- Added migration `0005_checkout_reservations`, backend tests and frontend checkout tests.
+
 ## 0.4.1 — Session authentication fix
 
 - Fixed cross-origin session cookie delivery by proxying `/api` through the frontend origin.

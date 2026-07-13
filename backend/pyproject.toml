@@ -1,7 +1,7 @@
 [project]
 name = "project2-backend"
-version = "0.4.1"
-description = "Telegram fashion store backend with auth, catalog, favorites and cart"
+version = "0.5.0"
+description = "Telegram fashion store backend with auth, catalog, favorites, cart and checkout reservations"
 requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.115.0,<1.0.0",

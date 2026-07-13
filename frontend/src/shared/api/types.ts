@@ -188,3 +188,76 @@ export type CartData = {
   currency: string;
   has_issues: boolean;
 };
+
+export type CheckoutContact = {
+  first_name: string;
+  last_name: string;
+  phone: string;
+  email: string | null;
+  comment: string | null;
+};
+
+export type CheckoutDelivery = {
+  method: 'pickup' | 'branch' | 'courier';
+  city: string | null;
+  branch: string | null;
+  address: string | null;
+};
+
+export type CheckoutDraft = {
+  contact: CheckoutContact;
+  delivery: CheckoutDelivery;
+};
+
+export type CheckoutValidationData = {
+  valid: boolean;
+  cart: CartData;
+  contact: CheckoutContact | null;
+  delivery: CheckoutDelivery | null;
+  reservation_minutes: number;
+};
+
+export type OrderItemData = {
+  id: string;
+  product_id: string | null;
+  variant_id: string | null;
+  product_name: string;
+  brand: string;
+  product_slug: string;
+  sku: string;
+  color: string;
+  size: string;
+  unit_price: string;
+  compare_at_price: string | null;
+  quantity: number;
+  subtotal: string;
+  image_url: string | null;
+};
+
+export type OrderData = {
+  id: string;
+  order_number: string;
+  status: 'awaiting_payment' | 'cancelled' | 'expired';
+  payment_status: 'not_started' | 'pending' | 'cancelled';
+  delivery_status: 'not_created';
+  currency: string;
+  subtotal: string;
+  discount_total: string;
+  delivery_total: string;
+  grand_total: string;
+  contact: CheckoutContact;
+  delivery: CheckoutDelivery;
+  reservation_expires_at: string;
+  created_at: string;
+  items: OrderItemData[];
+};
+
+export type CheckoutValidateRequest = {
+  contact?: CheckoutContact;
+  delivery?: CheckoutDelivery;
+};
+
+export type CheckoutConfirmRequest = {
+  contact: CheckoutContact;
+  delivery: CheckoutDelivery;
+};

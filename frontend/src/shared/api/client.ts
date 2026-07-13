@@ -8,6 +8,10 @@ import type {
   User,
   FavoritesResponse,
   CartData,
+  CheckoutConfirmRequest,
+  CheckoutValidateRequest,
+  CheckoutValidationData,
+  OrderData,
 } from './types';
 
 const apiBaseUrl = '';
@@ -246,4 +250,20 @@ export const cartApi = {
     apiRequest<CartData>(`/api/v1/cart/items/${itemId}`, { method: 'DELETE' }),
   clear: () => apiRequest<CartData>('/api/v1/cart', { method: 'DELETE' }),
   refresh: () => apiRequest<CartData>('/api/v1/cart/refresh', { method: 'POST' }),
+};
+
+export const checkoutApi = {
+  validate: (payload: CheckoutValidateRequest = {}) =>
+    apiRequest<CheckoutValidationData>('/api/v1/checkout/validate', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+  confirm: (payload: CheckoutConfirmRequest, idempotencyKey: string) =>
+    apiRequest<OrderData>('/api/v1/checkout/confirm', {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
+      body: JSON.stringify(payload),
+    }),
+  order: (orderId: string) =>
+    apiRequest<OrderData>(`/api/v1/checkout/orders/${encodeURIComponent(orderId)}`),
 };

@@ -1,54 +1,47 @@
-# Project2 Telegram Fashion Store — v4 Favorites & Cart
+# Project2 Telegram Fashion Store — v5 Checkout
 
-Повна накопичувальна версія Telegram fashion-магазину на базі стабільної `project2_v3_fix1`: foundation, Telegram auth, каталог, admin, обране і серверний кошик.
+Повна накопичувальна версія Telegram fashion-магазину на базі стабільної `project2_v4_fix1`.
 
 ## Реалізовано
 
-- FastAPI, PostgreSQL, SQLAlchemy Async та Alembic.
-- Aiogram-бот із `/start`, `/shop`, `/admin` і Telegram menu button.
-- Telegram `initData`, серверні сесії, ролі користувача й адміністратора.
-- Категорії, бренди, товари, кольори, розміри, variants/SKU, фото та залишки.
-- Головна, каталог, пошук, фільтри, сортування та сторінка товару.
-- Обране з idempotent add/remove та підтримкою недоступних товарів.
-- Серверний кошик із конкретним variant, quantity 1–10, актуальною ціною та перевіркою залишку.
-- Захист додавання в кошик через `Idempotency-Key`.
-- Виявлення зміни ціни й залишку без автоматичного видалення позицій.
-- Badge кошика, mobile-first екрани `/favorites` і `/cart`, loading/empty/error states.
-- Mobile-first admin routes, audit log, inventory movements і soft archive.
-- Детермінований idempotent seed каталогу.
+- FastAPI, PostgreSQL, SQLAlchemy Async, Alembic і Aiogram 3.
+- Telegram `initData`, серверні сесії та first-party `/api` proxy для cookie у Telegram WebView.
+- Каталог, категорії, бренди, товари, variants/SKU, фото й залишки.
+- Обране та серверний кошик із перевіркою актуальної ціни й доступності.
+- Checkout: контакти, спосіб отримання, review, підтвердження та result screen.
+- Замовлення зі snapshot товару, бренду, SKU, кольору, розміру, ціни та фото.
+- Резервування залишків на 15 хвилин через PostgreSQL row locks.
+- `Idempotency-Key` для захисту від double tap і повторного network retry.
+- Background task у backend для ідемпотентного завершення прострочених резервів.
+- Захист останньої одиниці: `SELECT ... FOR UPDATE` доповнено атомарним conditional update залишку.
+- Візуальні виправлення badge, selected size, accordion і scroll restoration.
 
-Не входять у v4: checkout, дані одержувача, доставка, замовлення, резервування, оплата, промокоди й бонуси.
+У v5 реальна онлайн-оплата ще не підключена. Створене замовлення має статус `awaiting_payment`, а резерв автоматично завершується через 15 хвилин.
+
+## Checkout API
+
+- `POST /api/v1/checkout/validate`
+- `POST /api/v1/checkout/confirm` — обов’язковий `Idempotency-Key`
+- `GET /api/v1/checkout/orders/{order_id}`
+
+Користувач бачить лише власні замовлення.
 
 ## Railway
 
-Структуру сервісів і чинні домени змінювати не потрібно:
+Структуру сервісів, домени та Start Commands змінювати не потрібно:
 
 - backend: Root Directory `/backend`;
 - bot: Root Directory `/backend`;
 - frontend: Root Directory `/frontend`;
-- PostgreSQL: наявний Railway service.
+- PostgreSQL: чинний Railway service.
 
-Backend `Dockerfile` запускає `backend/start.sh`, який автоматично виконує:
+Backend `start.sh` автоматично виконує:
 
 1. `alembic upgrade head`;
 2. idempotent seed;
 3. Uvicorn на `$PORT`.
 
-Bot service може залишатися з чинною Start Command:
-
-```text
-python -m app.bot.main
-```
-
-Frontend може залишатися з чинною Start Command:
-
-```text
-npm run start
-```
-
-У версії 0.4.1 браузер звертається до `/api` на frontend-домені, а Vite preview або Caddy проксіює запити до чинного `VITE_API_URL`. Це зберігає session cookie як first-party у Telegram WebView.
-
-Нових Railway variables для 0.4.1 немає.
+Для v5 нових обов’язкових variables немає. Потрібна міграція `0005_checkout_reservations`, яка застосовується автоматично під час deployment backend.
 
 ## Production variables
 
@@ -94,14 +87,8 @@ docker compose up --build
 ## Перевірки
 
 ```bash
-make check
-```
-
-Або окремо:
-
-```bash
 cd backend
-ruff check app tests migrations
+ruff check app tests
 mypy app
 pytest -q
 
@@ -115,13 +102,14 @@ npm run build
 
 ## Міграції
 
-- `0001_foundation` — system metadata;
-- `0002_auth` — users, roles, sessions, audit log;
-- `0003_catalog` — catalog, variants, media, inventory;
-- `0004_favorites_cart` — favorites, carts, cart items та idempotency keys.
+- `0001_foundation`
+- `0002_auth`
+- `0003_catalog`
+- `0004_favorites_cart`
+- `0005_checkout_reservations`
 
-Докладніше: `docs/COMMERCE_V4.md`.
+Докладніше: `docs/CHECKOUT_V5.md`.
 
 ## Версія
 
-`0.4.1`
+`0.5.0`

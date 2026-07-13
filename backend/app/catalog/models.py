@@ -209,7 +209,7 @@ class InventoryMovement(Base, UUIDPrimaryKeyMixin):
     __tablename__ = "inventory_movements"
     __table_args__ = (
         CheckConstraint(
-            "movement_type IN ('initial','manual_adjustment','correction')",
+            "movement_type IN ('initial','manual_adjustment','correction','reservation','reservation_release')",
             name="ck_inventory_movement_type",
         ),
         Index("ix_inventory_movements_variant_created", "variant_id", "created_at"),

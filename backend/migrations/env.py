@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.auth import models as auth_models  # noqa: F401
 from app.catalog import models as catalog_models  # noqa: F401
+from app.checkout import models as checkout_models  # noqa: F401
 from app.commerce import models as commerce_models  # noqa: F401
 from app.core.config import get_settings
 from app.db.base import Base

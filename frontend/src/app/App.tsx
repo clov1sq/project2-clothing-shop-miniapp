@@ -14,6 +14,10 @@ import { ProductPage } from '../pages/product/ProductPage';
 import { FavoritesPage } from '../pages/favorites/FavoritesPage';
 import { CartPage } from '../pages/cart/CartPage';
 import { ProfilePage } from '../pages/profile/ProfilePage';
+import { CheckoutContactPage } from '../pages/checkout/ContactPage';
+import { CheckoutDeliveryPage } from '../pages/checkout/DeliveryPage';
+import { CheckoutReviewPage } from '../pages/checkout/ReviewPage';
+import { CheckoutResultPage } from '../pages/checkout/ResultPage';
 import { AuthErrorScreen, AuthLoadingScreen } from '../shared/ui/AuthScreens';
 import { BottomNavigation } from '../shared/ui/BottomNavigation';
 
@@ -23,6 +27,6 @@ export function App() {
   const auth=useAuth(); const location=useLocation();
   if(auth.loading) return <AuthLoadingScreen/>;
   if(auth.error || !auth.user) return <AuthErrorScreen message={auth.error || 'Авторизація не завершена'} onRetry={auth.retry}/>;
-  const isProduct=location.pathname.startsWith('/products/'); const isAdmin=location.pathname.startsWith('/admin');
-  return <div className={`app-shell ${isProduct?'app-shell--detail':''} ${isAdmin?'app-shell--admin':''}`}><Routes><Route path="/" element={<HomePage/>}/><Route path="/catalog" element={<CatalogPage/>}/><Route path="/products/:slug" element={<ProductPage/>}/><Route path="/favorites" element={<FavoritesPage/>}/><Route path="/cart" element={<CartPage/>}/><Route path="/profile" element={<ProfilePage/>}/><Route path="/admin" element={<AdminGuard><AdminDashboardPage/></AdminGuard>}/><Route path="/admin/products" element={<AdminGuard><AdminProductsPage/></AdminGuard>}/><Route path="/admin/products/new" element={<AdminGuard><AdminProductFormPage/></AdminGuard>}/><Route path="/admin/products/:id" element={<AdminGuard><AdminProductFormPage/></AdminGuard>}/><Route path="/admin/categories" element={<AdminGuard><AdminTaxonomyPage type="categories"/></AdminGuard>}/><Route path="/admin/brands" element={<AdminGuard><AdminTaxonomyPage type="brands"/></AdminGuard>}/><Route path="/admin/inventory" element={<AdminGuard><AdminInventoryPage/></AdminGuard>}/><Route path="*" element={<Navigate to="/" replace/>}/></Routes>{!isProduct&&!isAdmin?<BottomNavigation/>:null}</div>;
+  const isProduct=location.pathname.startsWith('/products/'); const isAdmin=location.pathname.startsWith('/admin'); const isCheckout=location.pathname.startsWith('/checkout/');
+  return <div className={`app-shell ${isProduct?'app-shell--detail':''} ${isAdmin?'app-shell--admin':''} ${isCheckout?'app-shell--checkout':''}`}><Routes><Route path="/" element={<HomePage/>}/><Route path="/catalog" element={<CatalogPage/>}/><Route path="/products/:slug" element={<ProductPage/>}/><Route path="/favorites" element={<FavoritesPage/>}/><Route path="/cart" element={<CartPage/>}/><Route path="/profile" element={<ProfilePage/>}/><Route path="/checkout/contact" element={<CheckoutContactPage/>}/><Route path="/checkout/delivery" element={<CheckoutDeliveryPage/>}/><Route path="/checkout/review" element={<CheckoutReviewPage/>}/><Route path="/checkout/result/:orderId" element={<CheckoutResultPage/>}/><Route path="/admin" element={<AdminGuard><AdminDashboardPage/></AdminGuard>}/><Route path="/admin/products" element={<AdminGuard><AdminProductsPage/></AdminGuard>}/><Route path="/admin/products/new" element={<AdminGuard><AdminProductFormPage/></AdminGuard>}/><Route path="/admin/products/:id" element={<AdminGuard><AdminProductFormPage/></AdminGuard>}/><Route path="/admin/categories" element={<AdminGuard><AdminTaxonomyPage type="categories"/></AdminGuard>}/><Route path="/admin/brands" element={<AdminGuard><AdminTaxonomyPage type="brands"/></AdminGuard>}/><Route path="/admin/inventory" element={<AdminGuard><AdminInventoryPage/></AdminGuard>}/><Route path="*" element={<Navigate to="/" replace/>}/></Routes>{!isProduct&&!isAdmin&&!isCheckout?<BottomNavigation/>:null}</div>;
 }

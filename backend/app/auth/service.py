@@ -89,6 +89,7 @@ async def authenticate_user(
             token_hash=hash_session_token(token),
             created_at=now,
             expires_at=expires_at,
+            last_used_at=now,
             user_agent=user_agent,
         )
     )

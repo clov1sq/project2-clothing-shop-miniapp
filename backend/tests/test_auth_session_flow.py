@@ -55,6 +55,14 @@ async def test_cookie_session_reaches_me_cart_and_favorites(
         assert "Domain=" not in set_cookie
 
         me = await client.get("/api/v1/auth/me")
+        token = client.cookies.get("project2_session")
+        assert token
+        async with session_maker() as session:
+            stored = await session.scalar(
+                select(UserSession).where(UserSession.token_hash == hash_session_token(token))
+            )
+            assert stored is not None
+            assert stored.last_used_at is not None
         cart = await client.get("/api/v1/cart")
         favorites = await client.get("/api/v1/favorites")
 
