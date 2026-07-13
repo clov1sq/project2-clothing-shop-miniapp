@@ -46,7 +46,9 @@ Frontend може залишатися з чинною Start Command:
 npm run start
 ```
 
-Нових Railway variables для v4 немає.
+У версії 0.4.1 браузер звертається до `/api` на frontend-домені, а Vite preview або Caddy проксіює запити до чинного `VITE_API_URL`. Це зберігає session cookie як first-party у Telegram WebView.
+
+Нових Railway variables для 0.4.1 немає.
 
 ## Production variables
 
@@ -62,7 +64,7 @@ MINI_APP_URL=https://YOUR-FRONTEND.up.railway.app
 BOT_TOKEN=YOUR_TELEGRAM_TOKEN
 ADMIN_TELEGRAM_IDS=YOUR_TELEGRAM_ID
 TELEGRAM_AUTH_MAX_AGE_SECONDS=86400
-SESSION_COOKIE_NAME=p2_session
+SESSION_COOKIE_NAME=project2_session
 SESSION_TTL_DAYS=14
 DEV_AUTH_ENABLED=false
 ```
@@ -122,4 +124,4 @@ npm run build
 
 ## Версія
 
-`0.4.0`
+`0.4.1`

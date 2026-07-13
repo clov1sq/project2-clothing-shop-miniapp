@@ -9,10 +9,38 @@ from app.auth.dependencies import Identity, get_current_identity
 from app.auth.models import UserSession
 from app.auth.schemas import TelegramAuthRequest, user_payload
 from app.auth.service import authenticate_user, hash_session_token
-from app.core.config import get_settings
+from app.core.config import Settings, get_settings
 from app.db.session import get_session
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
+
+
+def _set_session_cookie(
+    response: Response,
+    settings: Settings,
+    token: str,
+    expires_at: datetime,
+) -> None:
+    response.set_cookie(
+        key=settings.session_cookie_name,
+        value=token,
+        max_age=settings.session_ttl_days * 24 * 60 * 60,
+        expires=expires_at,
+        httponly=True,
+        secure=settings.is_production,
+        samesite=settings.session_cookie_samesite,  # type: ignore[arg-type]
+        path="/",
+    )
+
+
+def _clear_session_cookie(response: Response, settings: Settings) -> None:
+    response.delete_cookie(
+        key=settings.session_cookie_name,
+        path="/",
+        secure=settings.is_production,
+        httponly=True,
+        samesite=settings.session_cookie_samesite,  # type: ignore[arg-type]
+    )
 
 
 @router.post("/telegram")
@@ -39,16 +67,7 @@ async def telegram_auth(
         payload={"telegram_id": user.telegram_id},
     )
     await session.commit()
-    response.set_cookie(
-        key=settings.session_cookie_name,
-        value=token,
-        max_age=settings.session_ttl_days * 24 * 60 * 60,
-        expires=expires_at,
-        httponly=True,
-        secure=settings.is_production,
-        samesite="none" if settings.is_production else "lax",
-        path="/",
-    )
+    _set_session_cookie(response, settings, token, expires_at)
     return {"ok": True, "data": {"user": user_payload(user, role)}}
 
 
@@ -80,5 +99,5 @@ async def logout(
         entity_id=str(identity.user.id),
     )
     await session.commit()
-    response.delete_cookie(settings.session_cookie_name, path="/")
+    _clear_session_cookie(response, settings)
     return {"ok": True, "data": {"logged_out": True}}

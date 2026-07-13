@@ -12,7 +12,7 @@ async def meta() -> dict[str, object]:
         "ok": True,
         "data": {
             "shop_name": settings.shop_name,
-            "version": "0.4.0",
+            "version": "0.4.1",
             "features": {
                 "telegram_auth": True,
                 "catalog": True,

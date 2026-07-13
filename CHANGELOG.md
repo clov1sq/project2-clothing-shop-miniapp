@@ -1,5 +1,16 @@
 # Project 2 changelog
 
+## 0.4.1 — Session authentication fix
+
+- Fixed cross-origin session cookie delivery by proxying `/api` through the frontend origin.
+- Centralized `credentials: "include"` for every frontend API request.
+- Added `POST /auth/telegram` → `GET /auth/me` bootstrap verification.
+- Gated cart and favorites queries until authentication is confirmed.
+- Added a single controlled session refresh and one protected-request retry on 401.
+- Standardized the host-only `project2_session` cookie and logout deletion settings.
+- Added session integration and frontend auth-flow tests.
+
+
 ## 0.4.0 — Favorites & Cart
 
 - Added server-side favorites with idempotent add/remove operations.
@@ -18,7 +29,6 @@
 - Kept strict TypeScript checks enabled and fixed catalog admin/variant selector typing.
 - Updated the frontend production Docker build to install build dependencies and serve only `dist`.
 
-# Changelog
 
 ## 0.3.0 — Catalog
 

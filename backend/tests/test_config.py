@@ -24,3 +24,19 @@ def test_bot_token_legacy_alias_is_supported() -> None:
 def test_telegram_bot_token_alias_is_supported() -> None:
     settings = Settings(TELEGRAM_BOT_TOKEN="telegram-token")
     assert settings.telegram_bot_token == "telegram-token"
+
+
+def test_production_frontend_origin_is_normalized_without_wildcard() -> None:
+    settings = Settings(
+        APP_ENV="production",
+        BACKEND_CORS_ORIGINS="https://frontend-production-37975.up.railway.app/",
+    )
+    assert settings.backend_cors_origins == [
+        "https://frontend-production-37975.up.railway.app"
+    ]
+    assert "*" not in settings.backend_cors_origins
+
+
+def test_default_session_cookie_name_is_stable() -> None:
+    settings = Settings(_env_file=None)
+    assert settings.session_cookie_name == "project2_session"

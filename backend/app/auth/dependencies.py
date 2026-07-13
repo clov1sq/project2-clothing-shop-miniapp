@@ -41,7 +41,7 @@ async def _resolve_identity(
         )
     )
     user_session = await session.scalar(statement)
-    if user_session is None:
+    if user_session is None or user_session.user.is_blocked:
         return None
     membership: ShopMember | None = user_session.user.membership
     role = membership.role if membership and membership.is_active else None

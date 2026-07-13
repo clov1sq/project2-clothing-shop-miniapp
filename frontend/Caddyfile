@@ -1,6 +1,13 @@
 :{$PORT:8080} {
-  root * /srv
   encode gzip zstd
-  try_files {path} /index.html
-  file_server
+
+  handle /api/* {
+    reverse_proxy {$VITE_API_URL:http://backend:8000}
+  }
+
+  handle {
+    root * /srv
+    try_files {path} /index.html
+    file_server
+  }
 }

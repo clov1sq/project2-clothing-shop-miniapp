@@ -32,4 +32,4 @@ No new Railway project is required.
 
 ## Deployment order
 
-A normal Git push is enough. The backend migration is additive: `0002_auth` then `0003_catalog`. Seed is safe to repeat.
+A normal Git push is enough. No new migration is required for 0.4.1. The frontend proxies `/api` to the existing `VITE_API_URL`, so the current Railway domains, variables and start commands stay unchanged.

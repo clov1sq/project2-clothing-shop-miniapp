@@ -19,7 +19,7 @@ from app.core.logging import configure_logging
 settings = get_settings()
 configure_logging(settings.log_level)
 
-app = FastAPI(title="Project2 Fashion Store API", version="0.4.0")
+app = FastAPI(title="Project2 Fashion Store API", version="0.4.1")
 
 app.add_middleware(
     CORSMiddleware,
@@ -41,4 +41,4 @@ app.include_router(admin_router)
 
 @app.get("/")
 async def root() -> dict[str, object]:
-    return {"ok": True, "service": "project2", "version": "0.4.0"}
+    return {"ok": True, "service": "project2", "version": "0.4.1"}

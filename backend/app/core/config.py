@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     mini_app_url: str = Field(default="http://localhost:5173", alias="MINI_APP_URL")
     admin_telegram_ids_raw: str = Field(default="", alias="ADMIN_TELEGRAM_IDS")
 
-    session_cookie_name: str = Field(default="p2_session", alias="SESSION_COOKIE_NAME")
+    session_cookie_name: str = Field(default="project2_session", alias="SESSION_COOKIE_NAME")
     session_ttl_days: int = Field(default=14, alias="SESSION_TTL_DAYS")
     dev_auth_enabled: bool = Field(default=False, alias="DEV_AUTH_ENABLED")
 
@@ -43,7 +43,8 @@ class Settings(BaseSettings):
         raw = self.backend_cors_origins_raw.strip()
         if raw.startswith("[") and raw.endswith("]"):
             raw = raw[1:-1]
-        return [item.strip().strip('"').strip("'") for item in raw.split(",") if item.strip()]
+        origins = [item.strip().strip('"').strip("'").rstrip("/") for item in raw.split(",")]
+        return [origin for origin in origins if origin]
 
     @property
     def admin_telegram_ids(self) -> set[int]:
@@ -60,6 +61,10 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.app_env.lower() == "production"
+
+    @property
+    def session_cookie_samesite(self) -> str:
+        return "none" if self.is_production else "lax"
 
 
 @lru_cache(maxsize=1)

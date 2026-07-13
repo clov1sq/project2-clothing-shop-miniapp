@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '../../shared/router';
+import { useAuth } from '../../auth/AuthProvider';
 import { ApiError, cartApi } from '../../shared/api/client';
 import type { CartData } from '../../shared/api/types';
 import { notifyHaptic } from '../../shared/telegram/telegram';
@@ -13,10 +14,11 @@ function errorMessage(error: unknown): string { return error instanceof ApiError
 
 export function CartPage() {
   const navigate = useNavigate();
+  const { status } = useAuth();
   const client = useQueryClient();
   const [clearOpen, setClearOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const query = useQuery({ queryKey: ['cart'], queryFn: cartApi.get, staleTime: 15_000 });
+  const query = useQuery({ queryKey: ['cart'], queryFn: cartApi.get, staleTime: 15_000, enabled: status === 'authenticated' });
   const apply = (data: CartData) => client.setQueryData(['cart'], data);
   const update = useMutation({ mutationFn: ({id, quantity}:{id:string;quantity:number}) => cartApi.update(id, quantity), onSuccess: (data) => { apply(data); notifyHaptic('success'); }, onError: (value) => { setError(errorMessage(value)); notifyHaptic('error'); } });
   const remove = useMutation({ mutationFn: cartApi.remove, onSuccess: (data) => { apply(data); notifyHaptic('success'); }, onError: (value) => setError(errorMessage(value)) });
