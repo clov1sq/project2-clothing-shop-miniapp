@@ -65,6 +65,7 @@ export type ProductCardData = {
   is_sale: boolean;
   is_available: boolean;
   colors: CatalogColor[];
+  is_favorite: boolean;
 };
 
 export type ProductMedia = {
@@ -139,4 +140,51 @@ export type ApiErrorPayload = {
   code: string;
   message: string;
   details?: Record<string, unknown>;
+};
+
+export type FavoriteProductData = ProductCardData & {
+  favorite_created_at: string;
+  is_active: boolean;
+  unavailable_message: string | null;
+};
+
+export type FavoritesResponse = {
+  items: FavoriteProductData[];
+  pagination: Pagination;
+};
+
+export type CartItemData = {
+  id: string;
+  variant_id: string;
+  product_id: string;
+  product_slug: string;
+  product_name: string;
+  brand: string;
+  color: { name: string; code: string };
+  size: { name: string; code: string };
+  sku: string;
+  image_url: string | null;
+  quantity: number;
+  unit_price: string;
+  unit_price_snapshot: string;
+  old_price: string | null;
+  discount_percent: number | null;
+  subtotal: string;
+  available_quantity: number;
+  max_quantity: number;
+  is_available: boolean;
+  price_changed: boolean;
+  unavailable_reason: string | null;
+  unavailable_message: string | null;
+};
+
+export type CartData = {
+  id: string | null;
+  items: CartItemData[];
+  total_quantity: number;
+  subtotal: string;
+  discount_total: string;
+  grand_total: string;
+  currency: string;
+  has_issues: boolean;
 };

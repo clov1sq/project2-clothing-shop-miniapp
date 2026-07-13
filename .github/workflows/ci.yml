@@ -33,10 +33,11 @@ jobs:
           APP_ENV: test
           DATABASE_URL: sqlite+aiosqlite:////tmp/project2-ci.db
         run: |
+          alembic upgrade 0003_catalog
           alembic upgrade head
           python -m app.seed
           python -m app.seed
-          alembic downgrade 0002_auth
+          alembic downgrade 0003_catalog
           alembic upgrade head
       - name: Bot no-token startup
         working-directory: backend
@@ -60,6 +61,9 @@ jobs:
       - name: Typecheck
         working-directory: frontend
         run: npm run typecheck
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
       - name: Tests
         working-directory: frontend
         run: npm test

@@ -22,3 +22,8 @@ export const EditIcon = (props: IconProps) => <IconBase {...props}><path d="m4 2
 export const BoxIcon = (props: IconProps) => <IconBase {...props}><path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="m4 7v10l8 4 8-4V7"/><path d="M12 11v10"/></IconBase>;
 export const ImageIcon = (props: IconProps) => <IconBase {...props}><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></IconBase>;
 export const ShieldIcon = (props: IconProps) => <IconBase {...props}><path d="M12 3 4.5 6v5.5c0 4.6 3.1 7.6 7.5 9.5 4.4-1.9 7.5-4.9 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-4"/></IconBase>;
+export const HeartIcon = ({ filled = false, ...props }: IconProps & { filled?: boolean }) => <IconBase {...props} fill={filled ? 'currentColor' : 'none'}><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></IconBase>;
+export const CartIcon = (props: IconProps) => <IconBase {...props}><path d="M3 4h2l2.1 10.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L20.2 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></IconBase>;
+export const TrashIcon = (props: IconProps) => <IconBase {...props}><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13"/><path d="M10 11v5M14 11v5"/></IconBase>;
+export const MinusIcon = (props: IconProps) => <IconBase {...props}><path d="M5 12h14"/></IconBase>;
+export const WifiOffIcon = (props: IconProps) => <IconBase {...props}><path d="m2 2 20 20M8.5 8.5A8 8 0 0 1 20 10M5 10a11 11 0 0 1 1.2-.9M8.5 14.5a5 5 0 0 1 7 0M12 19h.01"/></IconBase>;

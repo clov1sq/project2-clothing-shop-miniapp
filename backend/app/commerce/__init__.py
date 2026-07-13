@@ -1,0 +1,1 @@
+"""Favorites and cart domain."""

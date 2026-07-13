@@ -6,6 +6,8 @@ import type {
   HomeResponse,
   ProductDetailData,
   User,
+  FavoritesResponse,
+  CartData,
 } from './types';
 
 const apiBaseUrl = (
@@ -87,4 +89,24 @@ export const adminApi = {
   adjustInventory: (variantId: string, payload: Record<string, unknown>) => apiRequest<{ variant_id: string; quantity_on_hand: number; quantity_reserved: number; available_quantity: number }>(`/api/v1/admin/variants/${variantId}/inventory`, { method: 'PATCH', body: JSON.stringify(payload) }),
   addMedia: (productId: string, payload: Record<string, unknown>) => apiRequest<ProductDetailData>(`/api/v1/admin/products/${productId}/media`, { method: 'POST', body: JSON.stringify(payload) }),
   deleteMedia: (mediaId: string) => apiRequest<ProductDetailData>(`/api/v1/admin/media/${mediaId}`, { method: 'DELETE' }),
+};
+
+
+export const favoritesApi = {
+  list: (page = 1) => apiRequest<FavoritesResponse>(`/api/v1/favorites?page=${page}&limit=40`),
+  add: (productId: string) => apiRequest<{ product_id: string; is_favorite: boolean }>(`/api/v1/favorites/${productId}`, { method: 'POST' }),
+  remove: (productId: string) => apiRequest<{ product_id: string; is_favorite: boolean }>(`/api/v1/favorites/${productId}`, { method: 'DELETE' }),
+};
+
+export const cartApi = {
+  get: () => apiRequest<CartData>('/api/v1/cart'),
+  add: (variantId: string, quantity = 1, idempotencyKey = crypto.randomUUID()) => apiRequest<CartData>('/api/v1/cart/items', {
+    method: 'POST',
+    headers: { 'Idempotency-Key': idempotencyKey },
+    body: JSON.stringify({ variant_id: variantId, quantity }),
+  }),
+  update: (itemId: string, quantity: number) => apiRequest<CartData>(`/api/v1/cart/items/${itemId}`, { method: 'PATCH', body: JSON.stringify({ quantity }) }),
+  remove: (itemId: string) => apiRequest<CartData>(`/api/v1/cart/items/${itemId}`, { method: 'DELETE' }),
+  clear: () => apiRequest<CartData>('/api/v1/cart', { method: 'DELETE' }),
+  refresh: () => apiRequest<CartData>('/api/v1/cart/refresh', { method: 'POST' }),
 };

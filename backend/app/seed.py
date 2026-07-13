@@ -318,9 +318,9 @@ async def seed() -> None:
 
         metadata = await session.get(AppMetadata, "seed_version")
         if metadata is None:
-            session.add(AppMetadata(key="seed_version", value="catalog-v3"))
+            session.add(AppMetadata(key="seed_version", value="catalog-v4"))
         else:
-            metadata.value = "catalog-v3"
+            metadata.value = "catalog-v4"
         await session.commit()
 
 

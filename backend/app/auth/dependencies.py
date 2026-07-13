@@ -23,14 +23,13 @@ class Identity:
         return self.role in {"admin", "owner"}
 
 
-async def get_current_identity(
-    request: Request,
-    session: AsyncSession = Depends(get_session),
-) -> Identity:
+async def _resolve_identity(
+    request: Request, session: AsyncSession
+) -> Identity | None:
     settings = get_settings()
     token = request.cookies.get(settings.session_cookie_name)
     if not token:
-        raise AppError("AUTH_REQUIRED", "Потрібна авторизація", 401)
+        return None
 
     statement = (
         select(UserSession)
@@ -43,10 +42,27 @@ async def get_current_identity(
     )
     user_session = await session.scalar(statement)
     if user_session is None:
-        raise AppError("SESSION_EXPIRED", "Сесія завершилася. Відкрийте магазин ще раз", 401)
+        return None
     membership: ShopMember | None = user_session.user.membership
     role = membership.role if membership and membership.is_active else None
     return Identity(user=user_session.user, role=role)
+
+
+async def get_optional_identity(
+    request: Request,
+    session: AsyncSession = Depends(get_session),
+) -> Identity | None:
+    return await _resolve_identity(request, session)
+
+
+async def get_current_identity(
+    request: Request,
+    session: AsyncSession = Depends(get_session),
+) -> Identity:
+    identity = await _resolve_identity(request, session)
+    if identity is None:
+        raise AppError("AUTH_REQUIRED", "Потрібна авторизація", 401)
+    return identity
 
 
 async def require_admin(identity: Identity = Depends(get_current_identity)) -> Identity:

@@ -1,5 +1,16 @@
 # Project 2 changelog
 
+## 0.4.0 — Favorites & Cart
+
+- Added server-side favorites with idempotent add/remove operations.
+- Added one active cart per user and unique cart item per variant.
+- Added current price, stock and availability validation on every cart read and mutation.
+- Added `Idempotency-Key` protection against double tap and network retries.
+- Added price-change and out-of-stock states without silently deleting cart items.
+- Added `/favorites` and `/cart`, favorite actions, quantity controls, cart summary and navigation badge.
+- Added migration `0004_favorites_cart`, backend coverage and frontend commerce contract tests.
+- Preserved the strict React/TypeScript production build fixed in `project2_v3_fix1`.
+
 ## 0.3.0-fix1
 
 - Fixed React JSX type resolution during Railway production builds.

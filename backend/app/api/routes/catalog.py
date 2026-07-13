@@ -1,9 +1,11 @@
 from decimal import Decimal
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.dependencies import Identity, get_optional_identity
 from app.catalog.models import Brand, Category, Color, Product, Size
 from app.catalog.service import (
     PRODUCT_LOAD_OPTIONS,
@@ -14,14 +16,29 @@ from app.catalog.service import (
     serialize_product_card,
     serialize_product_detail,
 )
+from app.commerce.models import Favorite
 from app.core.errors import AppError
 from app.db.session import get_session
 
 router = APIRouter(prefix="/api/v1", tags=["catalog"])
 
 
+async def _favorite_ids(
+    session: AsyncSession, identity: Identity | None
+) -> set[UUID]:
+    if identity is None:
+        return set()
+    values = await session.scalars(
+        select(Favorite.product_id).where(Favorite.user_id == identity.user.id)
+    )
+    return set(values.all())
+
+
 @router.get("/home")
-async def home(session: AsyncSession = Depends(get_session)) -> dict[str, object]:
+async def home(
+    identity: Identity | None = Depends(get_optional_identity),
+    session: AsyncSession = Depends(get_session),
+) -> dict[str, object]:
     categories = list(
         (
             await session.scalars(
@@ -33,7 +50,7 @@ async def home(session: AsyncSession = Depends(get_session)) -> dict[str, object
         ).all()
     )
 
-    async def load_products(*conditions, limit: int = 8):
+    async def load_products(*conditions, limit: int = 8) -> list[Product]:
         statement = (
             select(Product)
             .options(*PRODUCT_LOAD_OPTIONS)
@@ -41,23 +58,28 @@ async def home(session: AsyncSession = Depends(get_session)) -> dict[str, object
             .order_by(Product.published_at.desc().nullslast(), Product.name)
             .limit(limit)
         )
-        return [
-            serialize_product_card(item)
-            for item in (await session.scalars(statement)).unique().all()
-        ]
+        return list((await session.scalars(statement)).unique().all())
 
     new_products = await load_products(Product.is_new.is_(True))
     sale_products = await load_products(
         and_(Product.compare_at_price.is_not(None), Product.compare_at_price > Product.base_price)
     )
     featured_products = await load_products(Product.is_featured.is_(True))
+    favorites = await _favorite_ids(session, identity)
+
+    def cards(products: list[Product]) -> list[dict[str, object]]:
+        return [
+            serialize_product_card(product, is_favorite=product.id in favorites)
+            for product in products
+        ]
+
     return {
         "ok": True,
         "data": {
             "categories": [serialize_category(item) for item in categories],
-            "new_products": new_products,
-            "sale_products": sale_products,
-            "featured_products": featured_products,
+            "new_products": cards(new_products),
+            "sale_products": cards(sale_products),
+            "featured_products": cards(featured_products),
         },
     }
 
@@ -154,6 +176,7 @@ async def products(
     sort: str = Query(
         default="popular", pattern="^(popular|newest|price_asc|price_desc|discount)$"
     ),
+    identity: Identity | None = Depends(get_optional_identity),
     session: AsyncSession = Depends(get_session),
 ) -> dict[str, object]:
     if min_price is not None and max_price is not None and min_price > max_price:
@@ -173,13 +196,20 @@ async def products(
         new=new,
         search=search,
         sort=sort,
+        favorite_ids=await _favorite_ids(session, identity),
     )
     return {"ok": True, "data": data}
 
 
 @router.get("/products/{slug}")
 async def product_detail(
-    slug: str, session: AsyncSession = Depends(get_session)
+    slug: str,
+    identity: Identity | None = Depends(get_optional_identity),
+    session: AsyncSession = Depends(get_session),
 ) -> dict[str, object]:
     product = await get_public_product(session, slug)
-    return {"ok": True, "data": serialize_product_detail(product)}
+    favorites = await _favorite_ids(session, identity)
+    return {
+        "ok": True,
+        "data": serialize_product_detail(product, is_favorite=product.id in favorites),
+    }

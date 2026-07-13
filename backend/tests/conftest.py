@@ -5,7 +5,12 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from app.auth.dependencies import Identity, get_current_identity, require_admin
+from app.auth.dependencies import (
+    Identity,
+    get_current_identity,
+    get_optional_identity,
+    require_admin,
+)
 from app.auth.models import ShopMember, User
 from app.catalog.models import (
     Brand,
@@ -148,6 +153,7 @@ async def client(session_maker, admin_identity):
     app.dependency_overrides[get_session] = override_session
     app.dependency_overrides[require_admin] = override_admin
     app.dependency_overrides[get_current_identity] = override_admin
+    app.dependency_overrides[get_optional_identity] = override_admin
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as http:
         yield http
     app.dependency_overrides.clear()

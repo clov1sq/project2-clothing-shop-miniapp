@@ -1,23 +1,27 @@
-# Project2 Telegram Fashion Store — v3 Catalog
+# Project2 Telegram Fashion Store — v4 Favorites & Cart
 
-Повна накопичувальна версія Telegram fashion-магазину: foundation + Telegram auth + каталог + базове адміністрування каталогу.
+Повна накопичувальна версія Telegram fashion-магазину на базі стабільної `project2_v3_fix1`: foundation, Telegram auth, каталог, admin, обране і серверний кошик.
 
 ## Реалізовано
 
 - FastAPI, PostgreSQL, SQLAlchemy Async та Alembic.
 - Aiogram-бот із `/start`, `/shop`, `/admin` і Telegram menu button.
-- Перевірка Telegram `initData`, строку `auth_date`, серверні сесії та admin role.
-- Категорії, бренди, товари, кольори, розміри, варіанти, фото й залишки.
-- Головна, каталог, пошук, фільтри, сортування, pagination і сторінка товару.
-- Mobile-first admin routes для товарів, категорій, брендів, фото та залишків.
-- Audit log, inventory movements, soft archive та optimistic concurrency.
-- Детермінований idempotent seed: 6 категорій, 6 брендів, 30 товарів, 114 варіантів.
+- Telegram `initData`, серверні сесії, ролі користувача й адміністратора.
+- Категорії, бренди, товари, кольори, розміри, variants/SKU, фото та залишки.
+- Головна, каталог, пошук, фільтри, сортування та сторінка товару.
+- Обране з idempotent add/remove та підтримкою недоступних товарів.
+- Серверний кошик із конкретним variant, quantity 1–10, актуальною ціною та перевіркою залишку.
+- Захист додавання в кошик через `Idempotency-Key`.
+- Виявлення зміни ціни й залишку без автоматичного видалення позицій.
+- Badge кошика, mobile-first екрани `/favorites` і `/cart`, loading/empty/error states.
+- Mobile-first admin routes, audit log, inventory movements і soft archive.
+- Детермінований idempotent seed каталогу.
 
-Не входять у v3: кошик, обране, checkout, замовлення, оплата й доставка.
+Не входять у v4: checkout, дані одержувача, доставка, замовлення, резервування, оплата, промокоди й бонуси.
 
 ## Railway
 
-Структуру сервісів змінювати не потрібно:
+Структуру сервісів і чинні домени змінювати не потрібно:
 
 - backend: Root Directory `/backend`;
 - bot: Root Directory `/backend`;
@@ -42,7 +46,9 @@ Frontend може залишатися з чинною Start Command:
 npm run start
 ```
 
-## Обов’язкові production variables
+Нових Railway variables для v4 немає.
+
+## Production variables
 
 ### Backend і bot
 
@@ -69,8 +75,6 @@ VITE_API_BASE_URL=https://YOUR-BACKEND.up.railway.app
 VITE_SHOP_NAME=BlueWear
 ```
 
-Після зміни frontend variables потрібен новий build frontend service.
-
 ## Локальний запуск
 
 ```bash
@@ -84,8 +88,6 @@ docker compose up --build
 - API live: `http://localhost:8000/health/live`;
 - database readiness: `http://localhost:8000/health/ready`;
 - OpenAPI: `http://localhost:8000/docs`.
-
-`DEV_AUTH_ENABLED=true` дозволяє локально відкрити frontend без Telegram. У production він має бути `false`.
 
 ## Перевірки
 
@@ -104,27 +106,20 @@ pytest -q
 cd ../frontend
 npm ci
 npm run typecheck
+npm run lint
 npm test
 npm run build
 ```
 
-## Міграції та seed
+## Міграції
 
 - `0001_foundation` — system metadata;
 - `0002_auth` — users, roles, sessions, audit log;
-- `0003_catalog` — catalog, variants, media, inventory та movements.
+- `0003_catalog` — catalog, variants, media, inventory;
+- `0004_favorites_cart` — favorites, carts, cart items та idempotency keys.
 
-Seed запускається окремо від migration і є безпечним для повторного запуску:
-
-```bash
-cd backend
-python -m app.seed
-```
-
-## Медіа у v3
-
-Seed використовує зовнішні demo photo URLs. Адмін додає фото через HTTPS URL. Постійне S3-compatible file storage не вмикається автоматично, тому Railway ephemeral disk не використовується для збереження фото.
+Докладніше: `docs/COMMERCE_V4.md`.
 
 ## Версія
 
-`0.3.0`
+`0.4.0`

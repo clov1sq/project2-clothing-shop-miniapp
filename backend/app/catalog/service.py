@@ -124,7 +124,7 @@ def serialize_brand(brand: Brand) -> dict[str, object]:
     }
 
 
-def serialize_product_card(product: Product) -> dict[str, object]:
+def serialize_product_card(product: Product, is_favorite: bool = False) -> dict[str, object]:
     media = product_primary_media(product)
     active_variants = [
         variant for variant in product.variants if variant.is_active and variant.archived_at is None
@@ -161,10 +161,13 @@ def serialize_product_card(product: Product) -> dict[str, object]:
         "is_sale": discount_percent(product.base_price, product.compare_at_price) is not None,
         "is_available": is_available,
         "colors": list(color_map.values()),
+        "is_favorite": is_favorite,
     }
 
 
-def serialize_product_detail(product: Product, admin: bool = False) -> dict[str, object]:
+def serialize_product_detail(
+    product: Product, admin: bool = False, is_favorite: bool = False
+) -> dict[str, object]:
     media = [
         {
             "id": str(item.id),
@@ -228,7 +231,7 @@ def serialize_product_detail(product: Product, admin: bool = False) -> dict[str,
             "sort_order": variant.size.sort_order,
         }
 
-    payload = serialize_product_card(product)
+    payload = serialize_product_card(product, is_favorite=is_favorite)
     payload.update(
         {
             "description": product.description,
@@ -343,6 +346,7 @@ async def list_products(
     new: bool = False,
     search: str | None = None,
     sort: str = "popular",
+    favorite_ids: set[UUID] | None = None,
 ) -> dict[str, object]:
     conditions = _public_conditions(
         category=category,
@@ -384,7 +388,12 @@ async def list_products(
     products = list((await session.scalars(statement)).unique().all())
     total_value = int(total or 0)
     return {
-        "items": [serialize_product_card(product) for product in products],
+        "items": [
+            serialize_product_card(
+                product, is_favorite=product.id in (favorite_ids or set())
+            )
+            for product in products
+        ],
         "pagination": {
             "page": page,
             "limit": limit,
